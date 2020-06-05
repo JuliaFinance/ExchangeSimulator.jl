@@ -5,15 +5,14 @@ function genfile(name)
     outfile = joinpath(@__DIR__,"data","$(lowercase(name)).json")
 
     data = Tables.table(readdlm(infile,'\t','\n',header=true)[1])
-    rows = Dict[]
+    symbols = Dict{Symbol,String}()
     for stock in Tables.rows(data)
         typeof(stock[1]) !== SubString{String} && continue
         typeof(stock[2]) !== SubString{String} && continue
-        row = Dict("Symbol" => stock[1], "Description" => stock[2])
-        push!(rows, row)
+        symbols[Symbol(stock[1])] = stock[2]
     end
     open(outfile, "w") do io
-        print(io,JSON3.write(rows))
+        print(io,JSON3.write(symbols))
     end
 end
 
